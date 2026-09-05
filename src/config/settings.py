@@ -1,7 +1,10 @@
 import os
 from pathlib import Path
 
+from celery.schedules import crontab
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DATA_DIR = Path(os.environ.get("DATA_DIR", BASE_DIR / "data"))
 
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
@@ -17,6 +20,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "properties",
+    "conversations",
+    "assistant",
 ]
 
 MIDDLEWARE = [
@@ -77,6 +83,23 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
+CELERY_TASK_ACKS_LATE = True
+CELERY_BEAT_SCHEDULE = {
+    "import-properties-daily": {
+        "task": "properties.tasks.import_properties_task",
+        "schedule": crontab(hour=0, minute=0),
+    },
+}
+
+# --- Domínio ---
+MESSAGE_DEBOUNCE_SECONDS = int(os.environ.get("MESSAGE_DEBOUNCE_SECONDS", "10"))
+MAX_PROPERTIES_PER_SEARCH = int(os.environ.get("MAX_PROPERTIES_PER_SEARCH", "2"))
+
+# --- OpenAI ---
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+OPENAI_TIMEOUT_SECONDS = float(os.environ.get("OPENAI_TIMEOUT_SECONDS", "60"))
+OPENAI_MAX_TOOL_ITERATIONS = int(os.environ.get("OPENAI_MAX_TOOL_ITERATIONS", "5"))
 
 # --- Logging ---
 LOGGING = {

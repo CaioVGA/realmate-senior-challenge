@@ -13,7 +13,12 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["watchdog>=6.0.0"]
+dev = [
+    "watchdog>=6.0.0",
+    "pytest>=8.3",
+    "pytest-django>=4.9",
+    "pytest-mock>=3.14",
+]
 typecheck = [
     "mypy[faster-cache]==1.15.0",
     "types-requests==2.32.0.20250306",
@@ -42,6 +47,12 @@ warn_unused_ignores = false
 disallow_incomplete_defs = true
 disallow_untyped_decorators = false
 disallow_any_unimported = false
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+pythonpath = ["src"]
+testpaths = ["src"]
+python_files = ["test_*.py"]
 
 [tool.uv]
 default-groups = ["dev", "typecheck"]
