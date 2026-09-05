@@ -4,7 +4,7 @@ import os
 import sys
 
 
-def main():
+def main() -> None:
     sys.path.insert(0, os.path.dirname(__file__))
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
     try:
